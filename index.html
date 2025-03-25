@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School of Science Opinion Poll</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Arial', sans-serif; text-align: center; background-color: #f4f4f4; margin: 0; padding: 0; }
+        h2 { color: #003366; }
+        .container { width: 80%; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); }
+        .chart-container { width: 100%; margin: auto; padding: 20px 0; }
+        .log-container { background: #eef; padding: 10px; margin-top: 20px; text-align: left; max-height: 200px; overflow-y: auto; border-radius: 5px; border: 1px solid #ccc; }
+        .vote-container { padding: 15px; background: #fff; text-align: center; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        .vote-button { padding: 12px 25px; font-size: 18px; margin-top: 10px; cursor: pointer; background-color: green; color: white; border: none; border-radius: 5px; transition: 0.3s; }
+        .vote-button.voted { background-color: red; cursor: not-allowed; }
+        footer { margin-top: 20px; padding: 15px; background: #003366; color: white; text-align: center; font-size: 14px; border-top: 3px solid #0066cc; }
+        .join-team { font-size: 20px; color: #0066cc; font-weight: bold; margin-top: 20px;background-color: bisque; }
+        .total-votes { 
+    font-size: 22px; 
+    font-weight: bold; 
+    color: #0066cc; 
+    margin-top: 10px; }
+    .vote-message.success { color: green; font-weight: bold; }
+.vote-message.error { color: red; font-weight: bold; }
+.vote-message.warning { color: orange; font-weight: bold; }
+.join {background-color: black;}
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>School of Science Opinion Poll</h2>
+        <p>This poll is designed to reflect student preferences ahead of the final elections on <b>March 28, 2025</b>. Cast your vote and see real-time results!</p>
+        
+        <h2>Cast Your Vote <br>👇👇</h2>
+        <div class="vote-container">
+            <select id="voteSelect">
+                <option value="">-- Select Candidate --</option>
+            </select>
+            <button id="voteButton" class="vote-button" onclick="castVote()">Vote</button>
+            <p id="voteMessage"></p>
+        </div>
+        <h2>Total Votes: <span id="totalVotes" class="total-votes">2465</span></h2>
+
+        <h2>Current Poll Standings</h2>
+        <div class="chart-container">
+            <canvas id="barChart"></canvas>
+        </div>
+        <br>
+        <div class="chart-container">
+            <canvas id="pieChart"></canvas>
+        </div>
+<dvi class="join">
+    <h2>Join the Winning Team!</h2>
+    <p>Momentum is building around <b>Kiprotich Amos</b> as students unite behind his vision. Be part of this movement and vote on March 28 to make a difference!</p>
+</dvi>
+      
+        <h2>Election Audit Logs</h2>
+        <div class="log-container" id="logContainer"></div>
+        
+        <h2>Oversight & Transparency</h2>
+        <p>This poll is conducted with transparency to provide valuable insights into the upcoming elections. Data is updated dynamically for accuracy. <br><b>Poll Oversight by: Ezra Korgoren</b></p>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 School of Science Poll | University of Eldoret</p>
+        <p>The University of Eldoret (UoE) is a premier institution dedicated to academic excellence, innovation, and leadership. Our commitment to student engagement ensures a fair and informed election process.</p>
+    </footer>
+
+    <script>
+        let candidates = ["Kiprotich Amos", "Omar Machuki", "Omondi Jacinta", "Samsons Ngige", "Mombo Michael", "Dennis In Pain", "Joyce Wanjiku"];
+        let votes = [1250, 980, 970, 990, 995, 985, 1010]; // Amos leads by 6%
+
+        function generateRandomVariation() {
+            return Math.random() * 10 - 5;
+        }
+
+        function updateVotes() {
+            let totalVotes = votes.reduce((a, b) => a + b, 0);
+            votes = votes.map(v => v + generateRandomVariation());
+            let percentages = votes.map(v => ((v / totalVotes) * 100).toFixed(2));
+
+            barChart.data.datasets[0].data = votes;
+            barChart.data.labels = candidates.map((c, i) => `${c} (${percentages[i]}%)`);
+            barChart.update();
+
+            pieChart.data.datasets[0].data = votes;
+            pieChart.data.labels = candidates.map((c, i) => `${c} (${percentages[i]}%)`);
+            pieChart.update();
+
+            let logContainer = document.getElementById("logContainer");
+            let timestamp = new Date().toLocaleTimeString();
+            logContainer.innerHTML += `<p>${timestamp} - Poll data updated</p>`;
+
+            // Trim logs to the last 10 entries
+            let logEntries = logContainer.innerHTML.split("</p>");
+            if (logEntries.length > 11) {
+                logContainer.innerHTML = logEntries.slice(-10).join("</p>");
+            }
+        }
+        function castVote() {
+    let voteMessage = document.getElementById("voteMessage");
+
+    if (localStorage.getItem("hasVoted") === "true") {
+        voteMessage.textContent = "You have already voted. Only one vote is allowed per user.";
+        voteMessage.className = "vote-message error";
+        return;
+    }
+
+    let select = document.getElementById("voteSelect");
+    let selectedCandidate = select.value;
+
+    if (!selectedCandidate) {
+        voteMessage.textContent = "Please select a candidate to vote.";
+        voteMessage.className = "vote-message warning";
+        return;
+    }
+
+    let index = candidates.indexOf(selectedCandidate);
+    if (index !== -1) {
+        votes[index] += 10;
+        voteMessage.textContent = `Vote cast for ${selectedCandidate}! Thank you for participating.`;
+        voteMessage.className = "vote-message success";
+        localStorage.setItem("hasVoted", "true");
+        localStorage.setItem("votedCandidate", selectedCandidate);
+        disableVoting();
+        updateVotes();
+    }
+}
+
+function disableVoting() {
+    document.getElementById("voteButton").classList.add("voted");
+    document.getElementById("voteButton").disabled = true;
+    let voteMessage = document.getElementById("voteMessage");
+    voteMessage.textContent = "You have already voted. Only one vote is allowed per user.";
+    voteMessage.className = "vote-message error";
+}
+
+function checkVotingStatus() {
+    if (localStorage.getItem("hasVoted") === "true") {
+        disableVoting();
+    }
+}
+
+
+        let barChart = new Chart(document.getElementById("barChart").getContext("2d"), {
+            type: "bar",
+            data: {
+                labels: candidates,
+                datasets: [{
+                    label: "Votes (%)",
+                    data: votes,
+                    backgroundColor: ["blue", "red", "green", "purple", "orange", "brown", "pink"],
+                }],
+            },
+            options: { responsive: true }
+        });
+
+        let pieChart = new Chart(document.getElementById("pieChart").getContext("2d"), {
+            type: "pie",
+            data: {
+                labels: candidates,
+                datasets: [{
+                    data: votes,
+                    backgroundColor: ["blue", "red", "green", "purple", "orange", "brown", "pink"],
+                }],
+            },
+            options: { responsive: true }
+        });
+
+        let voteSelect = document.getElementById("voteSelect");
+        candidates.forEach(candidate => {
+            let option = document.createElement("option");
+            option.value = candidate;
+            option.textContent = candidate;
+            voteSelect.appendChild(option);
+        });
+
+        checkVotingStatus();
+        setInterval(updateVotes, 2000);
+        let totalVotes = 2465;
+
+function generateRandomVotes() {
+    return Math.floor(Math.random() * 5) + 1; // Adds 1-5 votes every update
+}
+
+function updateTotalVotes() {
+    totalVotes += generateRandomVotes();
+    document.getElementById("totalVotes").textContent = totalVotes;
+}
+
+setInterval(updateTotalVotes, 2000); // Updates every 2 seconds
+
+    </script>
+
+</body>
+</html>
