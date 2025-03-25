@@ -70,8 +70,8 @@
     </footer>
 
     <script>
-        let candidates = ["Kiprotich Amos", "Omar Machuki", "Omondi Jacinta", "Samsons Ngige", "Mombo Michael", "Dennis In Pain", "Joyce Wanjiku"];
-        let votes = [1250, 980, 970, 990, 995, 985, 1010]; // Amos leads by 6%
+        let candidates = ["Kiprotich Amos", "Omar Machuki", "Omondi Jacinta", "Samsons Ngige", "Mombo Michael", "Dennis In Pain", "Joyce Wanjiku", "Rebecca Kemunto"];
+        let votes = [1250, 980, 970, 990, 995, 985, 1010, 1008]; // Amos leads by 6%
 
         function generateRandomVariation() {
             return Math.random() * 10 - 5;
@@ -152,7 +152,7 @@ function checkVotingStatus() {
                 datasets: [{
                     label: "Votes (%)",
                     data: votes,
-                    backgroundColor: ["blue", "red", "green", "purple", "orange", "brown", "pink"],
+                    backgroundColor: ["blue", "red", "green", "purple", "orange", "brown", "pink", "pale-blue"],
                 }],
             },
             options: { responsive: true }
@@ -164,7 +164,7 @@ function checkVotingStatus() {
                 labels: candidates,
                 datasets: [{
                     data: votes,
-                    backgroundColor: ["blue", "red", "green", "purple", "orange", "brown", "pink"],
+                    backgroundColor: ["blue", "red", "green", "purple", "orange", "brown", "pink", "pale-blue"],
                 }],
             },
             options: { responsive: true }
